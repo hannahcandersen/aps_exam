@@ -35,12 +35,9 @@ a, e, h = map(int, input().split()) # alliances, enemies, houses
 graph = defaultdict(lambda: defaultdict(int)) # vertex -> (vertex -> capacity).
 source_v = 0
 alliance_start = 1          # Alliances    Vertices 1 - n
-enemy_start = a+1             # Enemies:     Vertices n+1 - n+m
+enemy_start = a+1           # Enemies:     Vertices n+1 - n+m
 house_start = a+e+1         # Houses:      Vertices n+m+1 - n+m+p
 sink_v = a+e+h+1            # Sink:        Vertex n+m+p+1
-print(alliance_start)
-print(enemy_start)
-print(house_start)
 wanted_enemies = []
 
 #### BUILD GRAPH ####
