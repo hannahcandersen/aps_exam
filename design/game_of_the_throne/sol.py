@@ -32,20 +32,23 @@ a, e, h = map(int, input().split()) # alliances, enemies, houses
 
 #### GRAPH REPRESENTATION ####
 # Source -> Alliances -> Enemies -> Houses -> Sink. If no house, go straight to sink with capacity 1 
-graph = defaultdict(lambda: defaultdict(string)) # vertex -> (vertex -> capacity).
+graph = defaultdict(lambda: defaultdict(int)) # vertex -> (vertex -> capacity).
 source_v = 0
-alliance_start = 1          # Alliances:    Vertices 1 - n
-enemy_start = a             # Enemies:      Vertices n+1 - n+m
-house_start = a+e+1         # Houses:       Vertices n+m+1 - n+m+p
-sink_v = a+e+h+1            # Sink:         Vertex n+m+p+1
-
+alliance_start = 1          # Alliances    Vertices 1 - n
+enemy_start = a+1             # Enemies:     Vertices n+1 - n+m
+house_start = a+e+1         # Houses:      Vertices n+m+1 - n+m+p
+sink_v = a+e+h+1            # Sink:        Vertex n+m+p+1
+print(alliance_start)
+print(enemy_start)
+print(house_start)
+wanted_enemies = []
 
 #### BUILD GRAPH ####
 # Aliance preferences
-for i in range(a): 
-    alliance_v = i + alliance_start 
+for alliance_i in range(a): 
+    alliance_v = alliance_i + alliance_start 
     line = list(input().split()) # {name, capacity, name .. name}
-    capacity = line[1]
+    capacity = int(line[1])
     enemies = line[2:] 
     
     # Add edge between source and alliance 
@@ -53,31 +56,37 @@ for i in range(a):
     
     # Add edge between alliance and enemies
     for enemy in enemies: 
-        enemy_v = enemy + enemy_start 
+        # Add newly encountered enemies to the list of wanted enemies
+        if enemy not in wanted_enemies:
+            wanted_enemies.append(enemy)
+        
+        # Add edge between alliance_index and enemy_index
+        enemy_v = wanted_enemies.index(enemy) + enemy_start 
         graph[alliance_v][enemy_v] = 1 # capacity always 1
         
 # Houses
-for house in range(h): 
-    house_v = house + house_start
-    line = list(map(int, input().split())) # {name, name .. name, capacity}
+for house_i in range(h): 
+    house_v = house_i + house_start
+    line = list(input().split()) # {name, name .. name, capacity}
     
     enemies_in_house = line[1:-1]
-    capacity = line[-1] # Maximum number of enemies in the house that can be killed
+    capacity = int(line[-1]) # Maximum number of enemies in the house that can be killed
     
     # Add edge between enemy and house
     for enemy in enemies_in_house: 
-        enemy_v = enemy + enemy_start 
+        enemy_v = wanted_enemies.index(enemy) + enemy_start 
         graph[enemy_v][house_v] = 1
 
     # Add edge between houses and sink
     graph[house_v][sink_v] = capacity 
 
 # Add edges between enemies not in any house and the sink
-for enemy_v in range(enemy_start, house_start): 
+for enemy in wanted_enemies: 
+    enemy_v = wanted_enemies.index(enemy) + enemy_start 
     if enemy_v not in graph:
         graph[enemy_v][sink_v] = 1
 
-#print(graph)
+print(graph)
 
 
 #### FIND MAX FLOW ####
