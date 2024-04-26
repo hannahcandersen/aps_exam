@@ -4,7 +4,7 @@ has exactly one candle on it, and there are no left-over pieces
 '''
 
 # 1 <= n <= 50  - number of candles of distinct points located strictly inside the circle
-# 1 <= m <= 15  - number of cuts as a straight line ax+by+c=0
+# 1 <= m <= 15  - number of cuts as a straight line ax+by+c=0 - we can max get 30 pieces
 # 1 <= r <= 100 - radius centered at (0,0)
 
 '''
@@ -16,15 +16,13 @@ sqrt(x^2 + y^2) represents the Euclidean distance from a point with coordinates 
 '''
 The cutting lines are given as coefficients a, b, and c, where (0 <= |a|, |b| <= 100) and (0 <= |c| <= 20000)
 The values a and b are not both zero.
+- if a = 0 and b != 0, the line is horizontal
+- if a != 0 and b = 0, the line is vertical
+- if c = 0, then a is the slope and b is the y-intercept
 
-ax+by+c=0 explained:
-* a and b determine the slope and orientation of the line in the coordinate plane.
--- if a = 0 and b > 0, the line is horizontal
--- if a > 0 and b = 0, the line is vertical
--- if a and b are both non-zero, the line is diagonal
--- if a and b are both zero, the line is a point
-* c affects where the line intersects the y-axis when b != 0
--- If c=0, the line passes through the origin (0,0), simplifying the equation to ax+by=0.
+Denne video forklarer ax+by=c meget godt:
+https://www.khanacademy.org/math/algebra/x2f8bb11595b61c86:forms-of-linear-equations/x2f8bb11595b61c86:standard-form/v/standard-form-for-linear-equations
+Brug denne til at tegne med: https://www.geogebra.org/calculator
 '''
 
 '''
@@ -33,11 +31,105 @@ Disclaimers:
 - No candle is on a cut line.
 - No line is completely outside or tangent to the cake.
 - The input guarantees that the number of cake pieces remains the same if any cut line is shifted by at most 10^-4 in any direction.
+--- Regarding the cut lines: When it says that the number of cake pieces remains the same if any cut line is shifted by at most 10^-4
+    in any direction, it means that the cuts are made in such a way that moving a cut line a tiny bit will not change the total number of
+    pieces into which the cake is divided. This is to avoid ambiguity in cases where a cut might just graze a candle or be very close to doing so.
+    If such a situation occurred, a tiny shift could either cause a candle to be on the edge of a piece or split a piece into two, which would
+    make the problem ill-posed.
 - The input also guarantees that each candle remains in the interior of the same piece of cake if its position is shifted by at most 10^-4 in any direction.
+-- Regarding the candles: When the statement assures that each candle remains in the interior of the same piece of cake if its position is
+    shifted by at most 10^-4 in any direction, it is ensuring that no candle is precisely on the boundary of a piece. There's a small "safe zone"
+    around each candle where, even if the candle were nudged a little in any direction, it would still clearly belong to the same piece of the
+    cake without crossing over into another piece.
+
 '''
 
 
 n, m, r = map(int, input().split())
+#epsilon = 10**-4
+candles = []
+coefficients = []
+cake_pieces = []
+pieces = [set(range(n))] # Initialize the set containing all candles
+
+'''
+Computers cannot represent most decimal fractions exactly as binary fractions, leading to tiny errors in arithmetic involving floating-point numbers.
+When you compare two floating-point numbers for equality, you generally can't check if they're exactly equal because of potential rounding errors.
+Instead, you check if the absolute difference between them is less than epsilon.
+
+For instance, if you want to check if the floating-point numbers a and b are "equal," you would do something like this:
+    if abs(a - b) < epsilon:
+        # a and b are considered "equal"
+
+'''
 
 # Read the coordinates of the candles - n times
+for i in range(n):
+    (x, y) = map(int, input().split())
+    candles.append((x, y))
+
+
 # Read the coefficients of the cutting lines - m times
+for i in range(m):
+    (a, b, c) = map(int, input().split())
+    coefficients.append((a, b, c))
+
+
+
+side_one = set()
+side_two = set()
+
+
+for candle in candles:
+    print(f'candle : {candle}')
+    for line in coefficients:
+        print(f'line : {line}')
+        result = line[0] * candle[0] + line[1] * candle[1] + line[2]
+        print(f'result : {result}')
+        if result > 0:
+            side_one.add(candle)
+        else:
+            side_two.add(candle)
+
+''' fra chatten
+# Iterate over each cutting line provided in the input.
+for line in coefficients:
+    # Initialize a new list to hold the divided pieces after each cut.
+    new_pieces = []
+    
+    # Iterate over the existing pieces of cake.
+    for piece in pieces:
+        # Create two new sets to hold the candle indices for each side of the cut.
+        side_one = set()
+        side_two = set()
+        
+        # Iterate over the candle indices in the current piece.
+        for candle_index in piece:
+            # Retrieve the candle's coordinates based on its index.
+            candle = candles[candle_index]
+            
+            # Calculate the position of the candle relative to the cutting line.
+            # If the result is positive, the candle is on one side of the line.
+            if line.a * candle.x + line.b * candle.y + line.c > 0:
+                side_one.add(candle_index)
+            # If the result is not positive, it's either on the line or the other side.
+            # Since the problem guarantees no candle is on a cut line, it's on the other side.
+            else:
+                side_two.add(candle_index)
+        
+        # If there are candles on side_one of the cut, add this as a new piece.
+        if side_one:
+            new_pieces.append(side_one)
+        # If there are candles on side_two of the cut, add this as a new piece too.
+        if side_two:
+            new_pieces.append(side_two)
+    
+    # Update the list of pieces to the newly created pieces after the cut.
+    pieces = new_pieces
+'''
+
+
+
+
+print(side_one)
+print(side_two)
