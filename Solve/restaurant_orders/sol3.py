@@ -10,13 +10,13 @@ def solve_menu_orders(menu, orders):
     combinations[0] = [[]]  # The combination to achieve this is an empty list
     
     # Compute all possible ways to reach any cost up to the max order cost
-    for cost in menu:
+    for i, cost in enumerate(menu):
         for current_cost in range(cost, max_cost + 1):
             if dp[current_cost - cost] > 0:
                 if dp[current_cost] == 0:
-                    combinations[current_cost] = [combo + [cost] for combo in combinations[current_cost - cost]]
+                    combinations[current_cost] = [combo + [i+1] for combo in combinations[current_cost - cost]]
                 else:
-                    combinations[current_cost] += [combo + [cost] for combo in combinations[current_cost - cost]]
+                    combinations[current_cost] += [combo + [i+1] for combo in combinations[current_cost - cost]]
                 dp[current_cost] += dp[current_cost - cost]
     
     results = []
