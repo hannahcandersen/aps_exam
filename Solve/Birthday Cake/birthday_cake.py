@@ -48,9 +48,8 @@ Disclaimers:
 n, m, r = map(int, input().split())
 #epsilon = 10**-4
 candles = []
-coefficients = []
-cake_pieces = []
-pieces = [set(range(n))] # Initialize the set containing all candles
+lines = []
+cake_pieces = [set(range(n))] # Initialize a list of sets to represent the pieces of cake, with the first piece containing all candles.
 
 '''
 Computers cannot represent most decimal fractions exactly as binary fractions, leading to tiny errors in arithmetic involving floating-point numbers.
@@ -72,14 +71,12 @@ for i in range(n):
 # Read the coefficients of the cutting lines - m times
 for i in range(m):
     (a, b, c) = map(int, input().split())
-    coefficients.append((a, b, c))
+    lines.append((a, b, c))
 
 
 
-side_one = set()
-side_two = set()
 
-
+'''
 for candle in candles:
     print(f'candle : {candle}')
     for line in coefficients:
@@ -90,46 +87,56 @@ for candle in candles:
             side_one.add(candle)
         else:
             side_two.add(candle)
+'''
 
-''' fra chatten
 # Iterate over each cutting line provided in the input.
-for line in coefficients:
+for line in lines:
+    print(f'line: {line}')
     # Initialize a new list to hold the divided pieces after each cut.
-    new_pieces = []
+    new_cake_pieces = []
     
     # Iterate over the existing pieces of cake.
-    for piece in pieces:
+    for piece in cake_pieces:
         # Create two new sets to hold the candle indices for each side of the cut.
-        side_one = set()
-        side_two = set()
+        one_side = set()
+        other_side = set()
         
         # Iterate over the candle indices in the current piece.
         for candle_index in piece:
             # Retrieve the candle's coordinates based on its index.
             candle = candles[candle_index]
+            print(f'candle: {candle}')
             
             # Calculate the position of the candle relative to the cutting line.
             # If the result is positive, the candle is on one side of the line.
-            if line.a * candle.x + line.b * candle.y + line.c > 0:
-                side_one.add(candle_index)
-            # If the result is not positive, it's either on the line or the other side.
+            if line[0] * candle[0] + line[1] * candle[1] + line[2] > 0:
+                one_side.add(candle_index)
+                print(f'side_one: {one_side}')
+            # If the result is not positive, it's on the other side.
             # Since the problem guarantees no candle is on a cut line, it's on the other side.
             else:
-                side_two.add(candle_index)
+                other_side.add(candle_index)
+                print(f'side_two: {other_side}')
         
-        # If there are candles on side_one of the cut, add this as a new piece.
-        if side_one:
-            new_pieces.append(side_one)
-        # If there are candles on side_two of the cut, add this as a new piece too.
-        if side_two:
-            new_pieces.append(side_two)
+        # If there are candles on one_side of the cut, add this as a new piece.
+        if one_side:
+            new_cake_pieces.append(one_side)
+            print(f'new_pieces: {new_cake_pieces}')
+        # If there are candles on other_side of the cut, add this as a new piece too.
+        if other_side:
+            new_cake_pieces.append(other_side)
+            print(f'new_pieces: {new_cake_pieces}')
+
     
     # Update the list of pieces to the newly created pieces after the cut.
-    pieces = new_pieces
-'''
+    cake_pieces = new_cake_pieces
+    print(f'pieces: {cake_pieces}')
+
+print(f'length: {len(cake_pieces)}')
+if (len(cake_pieces) == n):
+    print('yes')
+else:
+    print('no')
 
 
 
-
-print(side_one)
-print(side_two)
