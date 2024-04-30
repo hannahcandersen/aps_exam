@@ -43,7 +43,9 @@ for i, item_price in enumerate(menu):
                 ways[price] = ways[price - item_price]  
                 last_item[price] = i + 1 # Store the final item used to reach this price (save as 1-indexed for printing)
             # Found another way to reach price
-            else: ways[price] += ways[price - item_price] 
+            else: 
+                ways[price] += ways[price - item_price] 
+                # We do not care about the last item used to reach the price if there are multiple ways to reach it
         # If the price cannot be reached from a previous price, it is already None and should remain None
 
 # Output the result for each order
