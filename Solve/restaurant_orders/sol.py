@@ -1,6 +1,4 @@
 """
-Iterative bottom-up approach
-
 Find out what was ordered  given the total cost of the order and the cost of each item on the menu.
     
 Input: 
@@ -15,43 +13,54 @@ Output:
     - If there is no order giving this cost, output "Impossible"
     
     
-Not memory efficient enough 
-Change to only storing the last item in the order and then backtracking to find the full order
+Description of solution: 
+- Iterative bottom-up approach. Start by finding the number of ways to reach each price from 0 up to the maximum order price
+- Tabulation to avoid recomputation of subproblems (memoization)
+- Keep track of the last item used to reach each price to be able to reconstruct the order. Saves space compared to storing the whole order
 """
 import time
 start = time.time()
 
-n = int(input())
-menu = list(map(int, input().split())) # 0-indexed, remember to convert to 1-indexed when printing
-m = int(input())
-orders = list(map(int, input().split()))
-max_order_price = max(orders)
+# Read input
+n = int(input())                          # Number of items on the menu
+menu = list(map(int, input().split()))    # Price of each item on the menu
+m = int(input())                          # Number of orders
+orders = list(map(int, input().split()))  # Total price of each order
+max_order_price = max(orders)             # To avoid unnecessary computation for higher prices than the maximum order price
 
-# Tabulation
-dp = [None] * (max_order_price + 1) 
-dp[0] = (1, []) # 0 cost can be reached in 1 way, with no items
+# Tabulation 
+ways = [None] * (max_order_price + 1)       # Number of ways to reach each price. Index corresponds to the price
+last_item = [None] * (max_order_price + 1)  # Last item used to reach each price. Index corresponds to the price
+ways[0] = 1                                 # Base case: Price=0 can be reached in 1 way, ordering no items
 
+# Fill the lists using iterative bottom-up approach
+for i, item_price in enumerate(menu): 
+    for price in range(item_price, max_order_price + 1):
+        # If the price can be reached from a previous price (without the current item)
+        if ways[price - item_price] is not None: 
+            # Price reached for the first time
+            if ways[price] is None:
+                ways[price] = ways[price - item_price]  
+                last_item[price] = i + 1 # Store the final item used to reach this price (save as 1-indexed for printing)
+            # Found another way to reach price
+            else: ways[price] += ways[price - item_price] 
+        # If the price cannot be reached from a previous price, it is already None and should remain None
 
-# Go through items on the menu and construct all the possible costs that can be reached
-for i, item_price in enumerate(menu):
-    for total_price in range(item_price, max_order_price + 1):
-        if dp[total_price - item_price] is not None:
-            ways, items = dp[total_price - item_price]
-            if dp[total_price] is None:
-                dp[total_price] = (ways, items + [i+1] if items is not None else [i+1]) # convert to 1-indexed            
-            else:
-                # If this cost was already reachable in a different way, it is ambiguous
-                dp[total_price] = (dp[total_price][0] + ways, dp[total_price][1] if dp[total_price][1] is not None else items + [i+1])
-                
-for total_cost in orders:
-    if dp[total_cost] is None:
+# Output the result for each order
+for order_price in orders:
+    if ways[order_price] is None:
         print("Impossible")
-    elif dp[total_cost][0] > 1 or dp[total_cost][1] is None:
+    elif ways[order_price] > 1:
         print("Ambiguous")
     else:
-        print(' '.join(map(str, dp[total_cost][1])))
+        # Reconstruct the order by backtracking
+        items = []
+        price = order_price
+        while price > 0:
+            item = last_item[price]
+            items.append(item)
+            price -= menu[item - 1] # Backtrack to last item for the previous price
+        print(' '.join(map(str, sorted(items)))) # Should be in sorted order in the output
 
 end = time.time()
-print(f"Time: {end-start}")
-
-
+print(f"Running time: {end-start}")
