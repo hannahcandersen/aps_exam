@@ -46,7 +46,7 @@ for i, item_price in enumerate(menu):
             else: 
                 ways[price] += ways[price - item_price] 
                 # We do not care about the last item used to reach the price if there are multiple ways to reach it
-        # If the price cannot be reached from a previous price, it is already None and should remain None
+        # Else the price cannot be reached from a previous price, it is already None and should remain None
 
 # Output the result for each order
 for order_price in orders:
