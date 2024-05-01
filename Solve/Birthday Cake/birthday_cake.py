@@ -54,6 +54,7 @@ import cmath
 
 
 n, m, r = map(int, input().split())
+epsilon = 10**-4
 candles = []
 lines = []
 intersection_points = set()
@@ -67,19 +68,26 @@ candles_on_piece = [set(range(n))] # Initialize a list of sets to represent the 
 ######## METHODS ########
 # Solve the system of equations formed by the equation of the circle and the equation of the line to find the intersection points
 def find_intersection_circle(a, b, c, r):
-   # ax + by + c = 0
-   # x² + y² = r²
+    # ax + by + c = 0
+    # x² + y² = r²
 
-   # Solve for x
-   x1 = (-a*c + b*cmath.sqrt((r**2)*(a**2+b**2)-(c**2)))/(a**2+b**2)
-   x2 = (-a*c - b*cmath.sqrt((r**2)*(a**2+b**2)-(c**2)))/(a**2+b**2)
+    if b == 0:
+        x = -c/a
+        # Solve for y in the circle equation: y = sqrt(r^2 - x^2)
+        y1 = cmath.sqrt(r**2 - x**2)
+        y2 = -cmath.sqrt(r**2 - x**2)
+        return [(x, y1), (x, y2)]
+    else:
+        # Solve for x
+        x1 = (-a*c + b*cmath.sqrt((r**2)*(a**2+b**2)-(c**2)))/(a**2+b**2)
+        x2 = (-a*c - b*cmath.sqrt((r**2)*(a**2+b**2)-(c**2)))/(a**2+b**2)
 
-   # Solve for y
-   y1 = (-c - a*x1) / b
-   y2 = (-c - a*x2) / b
+        # Solve for y
+        y1 = (-c - a*x1) / b
+        y2 = (-c - a*x2) / b
 
-   # Return the intersection points
-   return {(x1, y1), (x2, y2)}
+    # Return the intersection points
+    return {(x1, y1), (x2, y2)}
 
 
 def find_intersection_lines(line1, line2, r):
@@ -89,7 +97,7 @@ def find_intersection_lines(line1, line2, r):
    a2, b2, c2 = line2
 
    denominator = a1*b2 - a2*b1
-   if denominator == 0: # bruge epsilon her? hvordan kan jeg tjekke om den ligger mellem 0 og epsilon begge veje?
+   if abs(denominator) < epsilon:
       return None  # The lines are parallel and don't intersect
    
 
@@ -132,33 +140,23 @@ for i in range(m):
 
 ######## FIND CAKE PIECES ########
 for index in range(len(lines)):
-   # Add the intersection points for a line and circle
-   inters_circle = find_intersection_circle(lines[index][0], lines[index][1], lines[index][2], r)
-   intersection_points_circle.update(inters_circle)
-   intersection_points.update(inters_circle)
+    # Add the intersection points for a line and circle
+    inters_circle = find_intersection_circle(lines[index][0], lines[index][1], lines[index][2], r)
+    intersection_points_circle.update(inters_circle)
+    intersection_points.update(inters_circle)
 
-   # Add the intersection points for two lines
-   for j in range(index+1, len(lines)):
-      inters_line = find_intersection_lines(lines[index], lines[j], r)
-      if inters_line:
-         if inters_line not in intersection_points:
-            edges += 2  # Increment edges by 2 because two new edges are created
-         else:
-            edges += 1
-         intersection_points.add(inters_line)
-
-
-# Add the edges from the circle
-edges += len(intersection_points_circle)
-
-#F = E-V+1
-cake_pieces = edges - len(intersection_points) + 1
-#print(f'cake_pieces: {cake_pieces}')
+    # Add the intersection points for two lines
+    for j in range(index+1, len(lines)):
+        inters_line = find_intersection_lines(lines[index], lines[j], r)
+        if inters_line:
+            if inters_line not in intersection_points:
+                edges += 2  # Increment edges by 2 because two new edges are created
+            else:
+                edges += 1
+            intersection_points.add(inters_line)
 
 
-######## CHECK CANDLES ########
-# Iterate over each cutting line provided in the input.
-for line in lines:
+    ### CHECK CANDLES ###
     # Initialize a new list to hold the divided pieces after each cut.
     new_cake_pieces = []
     
@@ -175,7 +173,7 @@ for line in lines:
             
             # Calculate the position of the candle relative to the cutting line.
             # If the result is positive, the candle is on one side of the line.
-            if line[0] * candle[0] + line[1] * candle[1] + line[2] > 0:
+            if lines[index][0] * candle[0] + lines[index][1] * candle[1] + lines[index][2] > 0:
                 #print(f'result: {line[0] * candle[0] + line[1] * candle[1] + line[2]}')
                 one_side.add(candle_index)
                 #print(f'side_one: {one_side}')
@@ -197,7 +195,13 @@ for line in lines:
     
     # Update the list of pieces to the newly created pieces after the cut.
     candles_on_piece = new_cake_pieces
-    #print(f'pieces: {cake_pieces}')
+
+
+# Add the edges from the circle
+edges += len(intersection_points_circle)
+
+#F = E-V+1
+cake_pieces = edges - len(intersection_points) + 1
 
 #print(f'candles_on_piece: {candles_on_piece}')
 #print(f'cake_pieces: {cake_pieces}')
