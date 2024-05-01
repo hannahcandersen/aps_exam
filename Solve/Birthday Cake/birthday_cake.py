@@ -4,7 +4,7 @@ has exactly one candle on it, and there are no left-over pieces
 '''
 
 # 1 <= n <= 50  - number of candles of distinct points located strictly inside the circle
-# 1 <= m <= 15  - number of cuts as a straight line ax+by+c=0 - we can max get 30 pieces
+# 1 <= m <= 15  - number of cuts as a straight line ax+by+c=0 - max cuts is (m(m+1)/2)+1
 # 1 <= r <= 100 - radius centered at (0,0)
 
 '''
@@ -45,7 +45,7 @@ Disclaimers:
 '''
 
 '''
-Euler's formula: V-E+F = 2 bliver brugt til at finde antal kagestykker
+Euler's characteristic formula: V-E+F = 2 bliver brugt til at finde antal kagestykker
 men bliver brugt i denne format: F = E - V + 1 (kun +1, fordi vi ikki ønsker at inkludere det uendelige stykke kage rundt om cirklen)
 '''
 
@@ -61,7 +61,7 @@ intersection_points = set()
 intersection_points_circle = set()
 edges = m
 cake_pieces = 1
-candles_on_piece = [set(range(n))] # Initialize a list of sets to represent the pieces of cake, with the first piece containing all candles.
+candles_on_piece = [set(range(n))] # Initialize a list of sets to represent pieces of cake. Initially there is only one set containing all candles.
 
 
 
@@ -133,30 +133,32 @@ for i in range(n):
 
 # Read the coefficients of the cutting lines - m times
 for i in range(m):
-   (a, b, c) = map(int, input().split())
-   lines.append((a, b, c))
+    (a, b, c) = map(int, input().split())
 
 
 
-######## FIND CAKE PIECES ########
-for index in range(len(lines)):
+    ######## FIND CAKE PIECES ########
     # Add the intersection points for a line and circle
-    inters_circle = find_intersection_circle(lines[index][0], lines[index][1], lines[index][2], r)
+    inters_circle = find_intersection_circle(a, b, c, r)
     intersection_points_circle.update(inters_circle)
     intersection_points.update(inters_circle)
 
     # Add the intersection points for two lines
-    for j in range(index+1, len(lines)):
-        inters_line = find_intersection_lines(lines[index], lines[j], r)
-        if inters_line:
-            if inters_line not in intersection_points:
-                edges += 2  # Increment edges by 2 because two new edges are created
-            else:
-                edges += 1
-            intersection_points.add(inters_line)
+    if len(lines) != 0: # If there are already lines, check for intersections with the new line
+        for j in range(len(lines)):
+            inters_line = find_intersection_lines((a, b, c), lines[j], r)
+            if inters_line: # If there is an intersection point
+                if inters_line not in intersection_points:
+                    edges += 2  # Increment edges by 2 because two new edges are created
+                else:
+                    edges += 1 # Increment edges by 1 because one new edge is created, since the intersection point already exists
+                intersection_points.add(inters_line)
+
+    lines.append((a, b, c))
 
 
-    ### CHECK CANDLES ###
+
+    ######## CHECK CANDLES ########
     # Initialize a new list to hold the divided pieces after each cut.
     new_cake_pieces = []
     
@@ -173,7 +175,7 @@ for index in range(len(lines)):
             
             # Calculate the position of the candle relative to the cutting line.
             # If the result is positive, the candle is on one side of the line.
-            if lines[index][0] * candle[0] + lines[index][1] * candle[1] + lines[index][2] > 0:
+            if a * candle[0] + b * candle[1] + c > 0:
                 #print(f'result: {line[0] * candle[0] + line[1] * candle[1] + line[2]}')
                 one_side.add(candle_index)
                 #print(f'side_one: {one_side}')
