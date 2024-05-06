@@ -3,6 +3,8 @@
     
     Can be used for graphs represented as:
       graph = defaultdict(lambda: defaultdict(int)) # vertex -> (vertex -> capacity)
+      
+    Taken from: https://github.itu.dk/algorithms/aps-24/blob/main/060-network-flows/code/flow.py 
 """
 from collections import defaultdict
 
