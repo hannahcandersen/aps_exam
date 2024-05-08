@@ -1,44 +1,51 @@
 """
+Prints the max flow instead of our answer.
+Sets the capacity correctly
+"""
+
+"""
     Use to find the maximum flow in a graph using the Ford-Fulkerson algorithm.
-    
+
     Can be used for graphs represented as:
       graph = defaultdict(lambda: defaultdict(int)) # vertex -> (vertex -> capacity)
-      
+
     Taken from: https://github.itu.dk/algorithms/aps-24/blob/main/060-network-flows/code/flow.py 
 """
-from collections import defaultdict
 
+
+from collections import defaultdict
 ### BREADTH-FIRST SEARCH ###
 from collections import deque
 
-def bfs(graph, src, sink, mincap=0): 
+
+def bfs(graph, src, sink, mincap=0):
     """
     Implements the Breadth-First Search algorithm to find a path from a source node to a destination node in a graph.
     Works by exploring all the vertices at the current depth/level before moving on to vertices at the next depth level.
 
     Args:
-        graph (dict):           The graph, represented as a dictionary where the keys are nodes and the values are dictionaries 
+        graph (dict):           The graph, represented as a dictionary where the keys are nodes and the values are dictionaries
                                 representing the adjacent nodes and their capacities.
         src (hashable):         The source node from which the path starts.
         sink (hashable):        The destination node where the path ends.
         mincap (int, optional): The minimum capacity that an edge must have to be considered.
 
     Returns:
-        tuple: A tuple where the first element is a boolean indicating whether a path has been found and the second element 
+        tuple: A tuple where the first element is a boolean indicating whether a path has been found and the second element
                is the path if a path has been found or the set of visited nodes if no path has been found.
     """
-    
+
     # Parent dictionary storing the nodes' parents. Used to reconstruct the path to be able to return it
-    parent = {src:src} 
+    parent = {src: src}
 
     # Use a queue to keep track of the nodes to visit
-    queue = deque([src]) 
+    queue = deque([src])
 
     # While there are nodes in the queue
     while queue:
         current_node = queue.popleft()
 
-        for neighbor,cap in graph[current_node].items():
+        for neighbor, cap in graph[current_node].items():
             # If the capacity is greater than the minimum capacity and the node has not been visited
             if cap > mincap and neighbor not in parent:
                 parent[neighbor] = current_node
@@ -46,46 +53,46 @@ def bfs(graph, src, sink, mincap=0):
 
                 # If the node is the sink - Reconstruct the path and return it
                 if neighbor == sink:
-                    path =  []
+                    path = []
 
                     # Start from the sink
                     current = sink
 
                     while src != current:
                         # Add the edge from the parent to the current node to the path
-                        path.append((parent[current],current))
+                        path.append((parent[current], current))
 
                         # Move on to the parent
                         current = parent[current]
 
                     # Return true that a path has been found and the path
-                    return (True,path)
+                    return (True, path)
 
     # If no path is found, return False and the set of visited nodes
-    return (False,set(parent))
-    
-    
+    return (False, set(parent))
+
+
 ### FORD-FULKERSON ALGORITHM ###
 def flow(orggraph, src, dest):
     """
     Implements the Ford-Fulkerson algorithm to find the maximum flow in a flow network.
-    Works by repeatedly finding paths from the source to the destination in the residual graph 
+    Works by repeatedly finding paths from the source to the destination in the residual graph
     and augmenting the flow along these paths until no more augmenting paths can be found.
 
     Args:
-        orggraph (dict):    The original graph, represented as a dictionary where the keys are nodes and the values 
+        orggraph (dict):    The original graph, represented as a dictionary where the keys are nodes and the values
                             are dictionaries representing the adjacent nodes and their capacities.
         src (hashable):     The source node from which the flow starts.
         dest (hashable):    The destination node where the flow ends.
 
     Returns:
-        tuple: A tuple where the first element is the maximum flow, the second element is the residual graph, 
+        tuple: A tuple where the first element is the maximum flow, the second element is the residual graph,
                and the third element is the set of visited nodes.
     """
     # Create residual graph
     graph = defaultdict(lambda: defaultdict(int))
     maxcapacity = 0
-    
+
     # Copy the original graph to the residual graph and find the maximum capacity
     for u, d in orggraph.items():
         for v, c in d.items():
@@ -94,14 +101,14 @@ def flow(orggraph, src, dest):
 
     # Start flow at 0
     current_flow = 0
-    
+
     # Initialize the minimum capacity to the maximum capacity. To make it faster and more likely to find a high flow path
     mincap = maxcapacity
-    
+
     while True:
         # Check if there is a path with the current minimum capacity
         ispath, p_or_seen = bfs(graph, src, dest, mincap)
-        
+
         ## Path was not found
         if not ispath:
             # Halve the minimum capacity and try again with lower minimum capacity
@@ -114,7 +121,7 @@ def flow(orggraph, src, dest):
                         {a: {b: c - graph[a][b] for b, c in d.items() if graph[a][b] < c}
                          for a, d in orggraph.items()},
                         p_or_seen)
-                
+
         ## Path was found
         p = p_or_seen
         # Find the minimum capacity of the path
@@ -127,3 +134,64 @@ def flow(orggraph, src, dest):
             graph[u][v] -= saturation
             # Increase the capacity of the reverse edge by the minimum capacity of the path
             graph[v][u] += saturation
+
+a, e, h = map(int, input().split()) # alliances, enemies, houses
+
+#### GRAPH REPRESENTATION ####
+# Source -> Alliances -> Enemies -> Houses -> Sink. If no house, go straight to sink with capacity 1 
+graph = defaultdict(lambda: defaultdict(int)) # vertex -> (vertex -> capacity).
+source_v = 0
+alliance_start = 1          # Alliances    Vertices 1 - n
+enemy_start = a+1           # Enemies:     Vertices n+1 - n+m
+house_start = a+e+1         # Houses:      Vertices n+m+1 - n+m+p
+sink_v = a+e+h+1            # Sink:        Vertex n+m+p+1
+wanted_enemies = []
+
+#### BUILD GRAPH ####
+# Aliance preferences
+for alliance_i in range(a): 
+    alliance_v = alliance_i + alliance_start 
+    line = list(input().split()) # {name, capacity, name .. name}
+    capacity = int(line[1])
+    enemies = line[2:] 
+    
+    # Add edge between source and alliance 
+    graph[source_v][alliance_v] = capacity
+    
+    # Add edge between alliance and enemies
+    for enemy in enemies: 
+        # Add newly encountered enemies to the list of wanted enemies
+        if enemy not in wanted_enemies:
+            wanted_enemies.append(enemy)
+        
+        # Add edge between alliance_index and enemy_index
+        enemy_v = wanted_enemies.index(enemy) + enemy_start 
+        graph[alliance_v][enemy_v] = capacity
+        
+# Houses
+for house_i in range(h): 
+    house_v = house_i + house_start
+    line = list(input().split()) # {name, name .. name, capacity}
+    
+    enemies_in_house = line[1:-1]
+    capacity = int(line[-1]) # Maximum number of enemies in the house that can be killed
+    
+    # Add edge between enemy and house
+    for enemy in enemies_in_house: 
+        enemy_v = wanted_enemies.index(enemy) + enemy_start 
+        graph[enemy_v][house_v] = 1
+
+    # Add edge between houses and sink
+    graph[house_v][sink_v] = capacity 
+
+# Add edges between enemies not in any house and the sink
+for enemy in wanted_enemies: 
+    enemy_v = wanted_enemies.index(enemy) + enemy_start 
+    if enemy_v not in graph:
+        graph[enemy_v][sink_v] = 1
+
+#### FIND MAX FLOW ####
+(max_flow, residual_graph, visited) = flow(graph, source_v, sink_v)
+
+# Prints max flow and if the won or not
+print(max_flow)
