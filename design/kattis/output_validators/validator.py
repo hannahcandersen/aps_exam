@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # Kann blive kaldt fra kommando linjen med følgende argumenter:
 # usage: python3 validator.py input_file correct_output output_dir < contestants_output
+
+
 import sys
 
 def die(msg):
@@ -28,4 +30,3 @@ if given_answer == correct_answer:
     accept()
 else:
     die('wrong!')
-    
