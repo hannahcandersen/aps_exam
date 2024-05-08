@@ -127,6 +127,7 @@ def is_point_in_circle(x, y, r):
 ######## START ########
 # Read the coordinates of the candles - n times
 for i in range(n):
+   # O(n)
    (x,y) = map(int, input().split())
    candles.append((x,y))
 
@@ -146,6 +147,13 @@ for i in range(m):
     # Add the intersection points for two lines
     if len(lines) != 0: # If there are already lines, check for intersections with the new line
         for j in range(len(lines)):
+            # 1 - 2 - 3 - 4
+            '''
+                1+2+3+4..+m
+                = m(m+1)/2
+                = m^2
+                O(m^2)
+            '''
             inters_line = find_intersection_lines((a, b, c), lines[j], r)
             if inters_line: # If there is an intersection point
                 if inters_line not in intersection_points:
