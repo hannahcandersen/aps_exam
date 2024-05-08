@@ -83,9 +83,13 @@ for enemy in wanted_enemies:
     if enemy_v not in graph:
         graph[enemy_v][sink_v] = 1
 
-print(graph)
-
-
 #### FIND MAX FLOW ####
 (max_flow, residual_graph, visited) = flow(graph, source_v, sink_v)
-print(max_flow)
+result = max_flow/e
+
+if result > 0.5:
+    print("Dracarys")
+else:
+    print("When you play the game of thrones, you win or you die, therefore we surrender now")
+
+#print(max_flow)
