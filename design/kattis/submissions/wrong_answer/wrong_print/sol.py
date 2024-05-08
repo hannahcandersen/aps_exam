@@ -1,5 +1,6 @@
 """
-Sets capacity wrong    
+Prints the max flow instead of our answer.
+Sets the capacity correctly
 """
 
 
@@ -37,7 +38,7 @@ for alliance_i in range(a):
         
         # Add edge between alliance_index and enemy_index
         enemy_v = wanted_enemies.index(enemy) + enemy_start 
-        graph[alliance_v][enemy_v] = 1 # capacity always 1
+        graph[alliance_v][enemy_v] = capacity
         
 # Houses
 for house_i in range(h): 
@@ -64,4 +65,5 @@ for enemy in wanted_enemies:
 #### FIND MAX FLOW ####
 (max_flow, residual_graph, visited) = flow(graph, source_v, sink_v)
 
+# Prints max flow and if the won or not
 print(max_flow)

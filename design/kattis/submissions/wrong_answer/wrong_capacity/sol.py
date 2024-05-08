@@ -66,6 +66,6 @@ print(max_flow)
 print(result)
 
 if result > 0.5:
-    print("Dracarys")
+    print("Dracarys"  + max_flow)
 else:
-    print("When you play the game of thrones, you win or you die, therefore we surrender now")
+    print("When you play the game of thrones, you win or you die, therefore we surrender now " + max_flow)

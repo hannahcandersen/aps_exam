@@ -1,5 +1,5 @@
 """
-Use greedy algoirthm to solve the problem
+Use greedy algorithm to solve the problem
 Doesn't always find the optimal solution    
 """
 
