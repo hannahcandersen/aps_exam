@@ -187,8 +187,6 @@ for enemy in wanted_enemies:
 #### FIND MAX FLOW AND RESULT ####
 (max_flow, residual_graph, visited) = flow(graph, source_v, sink_v)
 result = max_flow/e
-print(max_flow)
-print(result)
 
 if result > 0.5:
     print("Dracarys", max_flow)

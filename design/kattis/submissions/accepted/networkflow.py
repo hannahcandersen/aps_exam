@@ -6,11 +6,10 @@
       graph = defaultdict(lambda: defaultdict(int)) # vertex -> (vertex -> capacity)
 """
 from collections import defaultdict
+from collections import deque
+from time import time
 
 ### BREADTH-FIRST SEARCH ###
-from collections import deque
-
-
 def bfs(graph, src, sink, mincap=0):
     """
     Args:
@@ -135,6 +134,7 @@ def flow(orggraph, src, dest):
     Builds a graph from the input and uses the Ford-Fulkerson algorithm to find the maximum flow in the graph.
 """
 
+start = time()
 a, e, h = map(int, input().split()) # alliances, enemies, houses
 
 #### GRAPH REPRESENTATION ####
@@ -195,3 +195,6 @@ if result > 0.5:
     print("Dracarys", max_flow)
 else:
     print("When you play the game of thrones, you win or you die, therefore we surrender now", max_flow)
+
+end = time()
+#print("Running time", end-start)
