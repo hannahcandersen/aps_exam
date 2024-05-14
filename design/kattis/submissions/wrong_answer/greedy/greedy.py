@@ -1,4 +1,6 @@
 """
+WRONG SOLUTION
+
 Use greedy algorithm to solve the problem
 Doesn't always find the optimal solution    
 """
