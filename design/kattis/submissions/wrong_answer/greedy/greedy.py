@@ -63,6 +63,6 @@ for house_name, _ in sorted_houses:
                         break  # Only one member can kill an enemy
 
 if total_kills > e / 2:
-    print(f"Dracarys {total_kills}")
+    print("Dracarys", total_kills)
 else:
-    print(f"When you play the game of thrones, you win or you die, therefore we surrender now {total_kills}")
+    print("When you play the game of thrones, you win or you die, therefore we surrender now", total_kills)

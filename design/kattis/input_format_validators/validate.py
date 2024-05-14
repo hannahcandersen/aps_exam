@@ -77,7 +77,7 @@ def validate_house_line(line, enemies_seen, houses):
     else:
         unique_members.add(member)
 
-    return True
+    return True, house
 
 
 def main():
@@ -99,9 +99,10 @@ def main():
         valid, name, enemies = validate_alliance_member_line(line, enemies_seen, alliance_members)
         if not valid:
             sys.exit(43)
-        alliance_members.update(name)
+        alliance_members.add(name)
         enemies_seen.update(enemies.split())
     
+    print(len(alliance_members))
     # Check that there are number of alliance members as expected
     if len(alliance_members) != a:
         sys.exit(43)
@@ -113,8 +114,10 @@ def main():
     # Validate all house lines
     for _ in range(h):
         line = sys.stdin.readline()
-        if not validate_house_line(line, enemies_seen, houses):
+        valid, house = validate_house_line(line, enemies_seen, houses)
+        if not valid:
             sys.exit(43)
+        houses.add(house)
             
     # Check that there are number of houses as expected
     if len(houses) != h:

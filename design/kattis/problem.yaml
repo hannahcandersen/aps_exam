@@ -1,2 +1,7 @@
 name: Game Of The Throne
 author: HCAN, KMEY, TUHO
+
+
+
+
+# something with the validation should be here. Gets the error: ERROR in output validators: There are validator programs but problem.yaml has validation = "default"
