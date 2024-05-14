@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# 43 for failure and 42 for succes 
-# (1 <= a, e <= 100, 0 <= h <= m)
 import sys
 import re
 
