@@ -6,7 +6,7 @@ import re
 
 def validate_first_line(line):    
     # Check that line matches regex
-    match = re.match(r"^(\d+) (\d+) (\d+)\r?\n$", line)
+    match = re.match(r"^(0|[1-9][0-9]*) (0|[1-9][0-9]*) (0|[1-9][0-9]*)\r?\n$", line)
     if not match:
         return False
     a, e, h = map(int, match.groups())
@@ -20,7 +20,7 @@ def validate_first_line(line):
 
 def validate_alliance_member_line(line, expected_enemy_names, alliance_members):
     # Check that the line matches the regex
-    match = re.match(r"^([A-Za-z]+) (\d+) ((?:[A-Za-z]+ ?)+)\r?\n$", line)
+    match = re.match(r"^([A-Za-z]+) (0|[1-9][0-9]*) ((?:[A-Za-z]+ ?)+)\r?\n$", line)
     if not match:
         return False
     name, capacity, enemies = map(str, match.groups())
@@ -48,7 +48,7 @@ def validate_alliance_member_line(line, expected_enemy_names, alliance_members):
 
 def validate_house_line(line, enemies_seen, houses):
     # Check that the line matches the regex
-    match = re.match(r"^([A-Za-z]+) ((?:[A-Za-z]+ ?)+) (\d+)\r?\n$", line)
+    match = re.match(r"^([A-Za-z]+) ((?:[A-Za-z]+ ?)+) (0|[1-9][0-9]*)\r?\n$", line)
     if not match:
         return False
     house, members, capacity = map(str, match.groups())
