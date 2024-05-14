@@ -3,7 +3,6 @@ Use greedy algorithm to solve the problem
 Doesn't always find the optimal solution    
 """
 
-
 a, e, h = map(int, input().strip().split())
 
 alliance_preferences = {} # Member -> List of enemies
@@ -11,20 +10,20 @@ alliance_capacity = {} # Member -> Remaining kills
 
 # Read alliance preferences and capacities
 for _ in range(a):
-    preference = input().strip().split()
+    preference = input().split() # {name, capacity, name .. name}
     member_name = preference[0]
     capacity = int(preference[1])
     enemies = preference[2:] 
     alliance_preferences[member_name] = enemies
     alliance_capacity[member_name] = capacity
 
-house_capacity = {} # House -> How many can be killed
+house_capacity = {} # House -> How many can be killed 
 house_members = {} # House -> List of members of the house
 enemies_to_house = {} # Enemy -> Which house they belong to
 
 # Read house descriptions
 for _ in range(h):
-    parts = input().strip().split()
+    parts = input().split() # {name, name .. name, capacity}
     house_name = parts[0]
     members = parts[1:-1]
     capacity = int(parts[-1])
@@ -34,7 +33,7 @@ for _ in range(h):
         enemies_to_house[member] = house_name
 
 # Sort houses by how many can be killed (ascending)
-sorted_houses = sorted(house_capacity.items(), key=lambda x: x[1])
+sorted_houses = sorted(house_capacity.items(), key=lambda x: x[1]) # Sort based on the values
 
 # Assign kills
 kills = {}
@@ -44,7 +43,7 @@ total_kills = 0
 for house_name, _ in sorted_houses:
     if house_name in house_members:
         members_in_house = house_members[house_name]
-        # Members preferred by most allies to least
+        # Find out how many wants to kill this member
         preference_count = {}
         for member in members_in_house:
             preference_count[member] = sum(member in alliance_preferences[ally] for ally in alliance_preferences)
