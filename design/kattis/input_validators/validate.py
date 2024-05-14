@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
-# 43 for failure and 42 for succes 
-# (1 <= a, e <= 100, 0 <= h <= m)
 import sys
 import re
 
 def validate_first_line(line):    
     # Check that line matches regex
-    match = re.match(r"^(\d+) (\d+) (\d+)\r?\n$", line)
+    match = re.match(r"^(0|[1-9][0-9]*) (0|[1-9][0-9]*) (0|[1-9][0-9]*)\r?\n$", line)
     if not match:
         return False
     a, e, h = map(int, match.groups())
@@ -20,19 +18,19 @@ def validate_first_line(line):
 
 def validate_alliance_member_line(line, expected_enemy_names, alliance_members):
     # Check that the line matches the regex
-    match = re.match(r"^([A-Za-z]+) (\d+) ((?:[A-Za-z]+ ?)+)\r?\n$", line)
+    match = re.match(r"^([A-Za-z]+) (0|[1-9][0-9]*) ((?:[A-Za-z]+ ?)+)\r?\n$", line)
     if not match:
-        return False
+        return False, None, None
     name, capacity, enemies = map(str, match.groups())
 
     # Check capacity is within limits
     #TODO: Change to our limits 
-    if not (1 <= int(capacity) <= 100):
-        return False 
+    if not (0 <= int(capacity) <= 100):
+        return False, None, None 
         
    # Check if we already have seen this name before
     if name in alliance_members:
-        return False
+        return False, None, None
     
     # Initialize sets to keep track of enemies names
     unique_enemies = set()
@@ -40,7 +38,7 @@ def validate_alliance_member_line(line, expected_enemy_names, alliance_members):
     # Check if each enemy is unique
     for enemy in enemies.split():
         if enemy in unique_enemies:
-            return False
+            return False, None, None
     else:
         unique_enemies.add(enemy)
     
@@ -48,24 +46,24 @@ def validate_alliance_member_line(line, expected_enemy_names, alliance_members):
 
 def validate_house_line(line, enemies_seen, houses):
     # Check that the line matches the regex
-    match = re.match(r"^([A-Za-z]+) ((?:[A-Za-z]+ ?)+) (\d+)\r?\n$", line)
+    match = re.match(r"^([A-Za-z]+) ((?:[A-Za-z]+ ?)+) (0|[1-9][0-9]*)\r?\n$", line)
     if not match:
-        return False
+        return False, None
     house, members, capacity = map(str, match.groups())
 
     # Check capacity is within limits
     # TODO: Change to our limits 
-    if not (1 <= int(capacity) <= 100):
-        return False 
+    if not (0 <= int(capacity) <= 100):
+        return False, None
     
     # Check that members are some known enemies
     for member in members.split():
         if member not in enemies_seen:
-            return False
+            return False, None
         
     #Check if we already has seen this hous before         
     if house in houses:
-        return False
+        return False, None
         
    # Check that the same member is not used twice in the same line
    # Initialize sets to keep track of members names
@@ -73,7 +71,7 @@ def validate_house_line(line, enemies_seen, houses):
     # Check if each member is unique
     for member in members.split():
         if member in unique_members:
-            return False
+            return False, None
     else:
         unique_members.add(member)
 

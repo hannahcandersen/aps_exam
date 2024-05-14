@@ -1,28 +1,16 @@
 """
-Prints the max flow instead of our answer.
-Sets the capacity correctly
-"""
-
-"""
-    Use to find the maximum flow in a graph using the Ford-Fulkerson algorithm.
-
+    FORD FULKERSON FLOW ALGORITHM
+    Taken from: https://github.itu.dk/algorithms/aps-24/blob/main/060-network-flows/code/flow.py 
+    
     Can be used for graphs represented as:
       graph = defaultdict(lambda: defaultdict(int)) # vertex -> (vertex -> capacity)
-
-    Taken from: https://github.itu.dk/algorithms/aps-24/blob/main/060-network-flows/code/flow.py 
 """
-
-
 from collections import defaultdict
-### BREADTH-FIRST SEARCH ###
 from collections import deque
 
-
+### BREADTH-FIRST SEARCH ###
 def bfs(graph, src, sink, mincap=0):
     """
-    Implements the Breadth-First Search algorithm to find a path from a source node to a destination node in a graph.
-    Works by exploring all the vertices at the current depth/level before moving on to vertices at the next depth level.
-
     Args:
         graph (dict):           The graph, represented as a dictionary where the keys are nodes and the values are dictionaries
                                 representing the adjacent nodes and their capacities.
@@ -75,7 +63,7 @@ def bfs(graph, src, sink, mincap=0):
 ### FORD-FULKERSON ALGORITHM ###
 def flow(orggraph, src, dest):
     """
-    Implements the Ford-Fulkerson algorithm to find the maximum flow in a flow network.
+    Ford-Fulkerson algorithm to find the maximum flow in a flow network.
     Works by repeatedly finding paths from the source to the destination in the residual graph
     and augmenting the flow along these paths until no more augmenting paths can be found.
 
@@ -135,6 +123,16 @@ def flow(orggraph, src, dest):
             # Increase the capacity of the reverse edge by the minimum capacity of the path
             graph[v][u] += saturation
 
+
+
+
+
+"""
+    WRONG SOLUTION
+    
+    Only prints the max flow, does not calculate if the alliance won or not
+"""
+
 a, e, h = map(int, input().split()) # alliances, enemies, houses
 
 #### GRAPH REPRESENTATION ####
@@ -160,11 +158,8 @@ for alliance_i in range(a):
     
     # Add edge between alliance and enemies
     for enemy in enemies: 
-        # Add newly encountered enemies to the list of wanted enemies
         if enemy not in wanted_enemies:
             wanted_enemies.append(enemy)
-        
-        # Add edge between alliance_index and enemy_index
         enemy_v = wanted_enemies.index(enemy) + enemy_start 
         graph[alliance_v][enemy_v] = capacity
         
@@ -193,5 +188,5 @@ for enemy in wanted_enemies:
 #### FIND MAX FLOW ####
 (max_flow, residual_graph, visited) = flow(graph, source_v, sink_v)
 
-# Prints max flow and if the won or not
+# Prints max flow and if they won or not
 print(max_flow)
