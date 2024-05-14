@@ -50,7 +50,6 @@ men bliver brugt i denne format: F = E - V + 1 (kun +1, fordi vi ikki ønsker at
 '''
 
 import math
-import cmath
 
 
 n, m, r = map(int, input().split())
@@ -66,7 +65,7 @@ candles_on_piece = [set(range(n))] # Initialize a list of sets to represent piec
 
 
 ######## METHODS ########
-# Solve the system of equations formed by the equation of the circle and the equation of the line to find the intersection points
+# Solve for intersection points between a circle and a line
 def find_intersection_circle(a, b, c, r):
     # ax + by + c = 0
     # x² + y² = r²
@@ -74,13 +73,13 @@ def find_intersection_circle(a, b, c, r):
     if b == 0:
         x = -c/a
         # Solve for y in the circle equation: y = sqrt(r^2 - x^2)
-        y1 = cmath.sqrt(r**2 - x**2)
-        y2 = -cmath.sqrt(r**2 - x**2)
+        y1 = math.sqrt(r**2 - x**2)
+        y2 = -math.sqrt(r**2 - x**2)
         return [(x, y1), (x, y2)]
     else:
         # Solve for x
-        x1 = (-a*c + b*cmath.sqrt((r**2)*(a**2+b**2)-(c**2)))/(a**2+b**2)
-        x2 = (-a*c - b*cmath.sqrt((r**2)*(a**2+b**2)-(c**2)))/(a**2+b**2)
+        x1 = (-a*c + b*math.sqrt((r**2)*(a**2+b**2)-(c**2)))/(a**2+b**2)
+        x2 = (-a*c - b*math.sqrt((r**2)*(a**2+b**2)-(c**2)))/(a**2+b**2)
 
         # Solve for y
         y1 = (-c - a*x1) / b
@@ -90,46 +89,54 @@ def find_intersection_circle(a, b, c, r):
     return {(x1, y1), (x2, y2)}
 
 
+# Solve for intersection point between two lines
 def find_intersection_lines(line1, line2, r):
-   # using cross product
-   # Exactly one intersection point that is not a vertex of any line segment
-   a1, b1, c1 = line1
-   a2, b2, c2 = line2
+    # Using cross product
+    a1, b1, c1 = line1
+    a2, b2, c2 = line2
 
-   denominator = a1*b2 - a2*b1
-   if abs(denominator) < epsilon:
-      return None  # The lines are parallel and don't intersect
+    denominator = a1*b2 - a2*b1
+    if abs(denominator) < epsilon:
+        return None  # The lines are parallel and don't intersect
    
 
-   x = (b2*c1 - b1*c2) / denominator
-   y = (a1*c2 - a2*c1) / denominator
+    x = (b2*c1 - b1*c2) / denominator
+    y = (a1*c2 - a2*c1) / denominator
 
-   if not is_point_in_circle(x, y, r):
-      return None # The intersection point is outside the circle
+    if not is_point_in_circle(x, y, r):
+        return None # The intersection point is outside the circle
 
-   return (x, y)
+    return (x, y)
 
 
 
 def is_point_in_circle(x, y, r):
-   '''
-   If d < r, the point is inside the circle.
-   If d > r, the point is outside the circle.
-   If d = r, the point is on the boundary of the circle.
-   '''
-   # math.sqrt((x - h)**2 + (y - k)**2)   -> k,h = center of the circle
-   # Since the circle is centered at the origin (0,0), I can simplify the distance formula to:
-   d = math.sqrt(x**2 + y**2)
-   return d < r
+    '''
+    If d < r, the point is inside the circle.
+    If d > r, the point is outside the circle.
+    If d = r, the point is on the boundary of the circle.
+    '''
+    # math.sqrt((x - h)**2 + (y - k)**2)   -> k,h = center of the circle
+    '''
+    Fra bogen: Euclidean distance
+    The Euclidean distance between two points in the plane is the length of the line segment that connects the two points.
+    If the points are (x1, y1) and (x2, y2), then the distance between them is given by the formula:
+    d = sqrt((x2 - x1)^2 + (y2 - y1)^2)
+    With this we can check if the distance is less than the radius of the circle
+    '''
+    # Since the circle is centered at the origin (0,0), I can simplify the distance formula to:
+    d = math.sqrt(x**2 + y**2)
+    return d < r
+
 
 
 
 ######## START ########
 # Read the coordinates of the candles - n times
 for i in range(n):
-   # O(n)
-   (x,y) = map(int, input().split())
-   candles.append((x,y))
+    # O(n)
+    (x,y) = map(int, input().split())
+    candles.append((x,y))
 
 
 # Read the coefficients of the cutting lines - m times
@@ -143,6 +150,7 @@ for i in range(m):
     inters_circle = find_intersection_circle(a, b, c, r)
     intersection_points_circle.update(inters_circle)
     intersection_points.update(inters_circle)
+
 
     # Add the intersection points for two lines
     if len(lines) != 0: # If there are already lines, check for intersections with the new line
@@ -163,6 +171,7 @@ for i in range(m):
                 intersection_points.add(inters_line)
 
     lines.append((a, b, c))
+
 
 
 
@@ -209,11 +218,14 @@ for i in range(m):
 
 # Add the edges from the circle
 edges += len(intersection_points_circle)
+print(f'edges: {edges}')
 
 #F = E-V+1
 cake_pieces = edges - len(intersection_points) + 1
+print(f'cake_pieces: {cake_pieces}')
 
-#print(f'candles_on_piece: {candles_on_piece}')
+print(f'intersection_points: {len(intersection_points)}')
+print(f'candles_on_piece: {candles_on_piece}')
 #print(f'cake_pieces: {cake_pieces}')
 
 
@@ -221,3 +233,4 @@ if all(len(s) == 1 for s in candles_on_piece) and len(candles_on_piece) == cake_
    print('yes')
 else:
     print('no')
+
