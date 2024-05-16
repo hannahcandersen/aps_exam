@@ -1,23 +1,20 @@
 \problemname{Game of the Throne}
 
 \section{Problem}
-In the ruthless world of Westeros, “The Game for The Iron Throne" is a dangerous game to play. 
-One must navigate complex alliances and enemies. As the commander, you are tasked with strategizing. In order to claim victory, you and your alliance must strategically eliminate your enemies. 
-However, your allies have specific preferences regarding which enemies they wish to kill, and as their leader, you must accommodate these preferences in your battle plans. For instance, we all know that Stannis harbors a not-so-secret wish to usurp his brothers’ claims, and Cersei? Well, she'd happily exterminate anyone who doesn't toast to her health with a glass of Dornish red. 
-Each enemy belongs to a house, such as House Stark or House Targaryen. Since it's not always possible to eliminate all enemies from the same house at once, you must make calculated decisions about which members of each house to challenge strategically. 
-Additionally, your alliance cannot always eliminate as many enemies as they would like. While Cersei may wish to kill everyone opposing her, there are practical limitations on how many targets you can engage at one time. 
-Considering all these constraints, your task as a commander is to write a program that calculates the maximum number of enemies your alliance can kill. 
-To successfully claim victory in the game for the Iron Throne, your strategy must ensure that you defeat more than 50\% of your enemies; failing to do so will require you to surrender.
+In the ruthless world of Westeros, "The Game for the Iron Throne" is as dangerous as it gets. To win, you'll need your bannermen by your side to take out your enemies. But nothing comes without a cost: your allies have their own hit lists, and you need to keep them happy. Take Arya, for instance—she's got a list, and she'd love to check off a few more names.
+\\\\
+Each enemy belongs to a house, like the Starks or Targaryens, and you can't always wipe out an entire house at once. Just look at the Red Wedding — not all the Starks died, right? You’ll need to pick your targets wisely.
+\\\\
+Plus, there’s this little practical matter. Cersei might want to kill everyone who says her sons aren’t legitimate, but you can’t just go on a killing spree. Your alliance have limits on how many enemies they can target at one time.
+\\\\
+Your task is to write a program that figures out the maximum number of enemies your alliance can kill, given all these constraints. To win the Iron Throne, you need to take down more than 50\% of your enemies. If you can't do that, you'll have to surrender.
 
 \section{Input}
-Vi mangler at finde ud af hvad vores MAX for a, e og h er.
-The input begins with a line containing three integers \(a\), \(e\), and \(h\) separated by spaces. These represent the number of members in your alliance, the number of enemies, and the number of enemy houses, respectively \(1 \leq a, e \leq 100\), \(0 \leq h \leq e\). Members and enemies are uniquely identified by names.
-The next \(a\) lines describe the preferences for each member of the alliance in the form \(a k e1 e2 e3 ..\). Each line begins with the name of an alliance member followed by an integer \(k\), which indicates the number of enemies this member is willing to confront. The line continues with a list of names of enemies this member prefers to target. An alliance member will always have at least one enemy he wants to target.
-Following this are \(h\) lines detailing the house affiliations and constraints in the form \(h e1, e2, e3 .. r\). Each line starts with the name of an enemy house, followed by a list of enemy names affiliated with this house. The line ends with an integer \(r\), indicating the maximum number of members from this house that can be targeted. An enemy can belong to exactly one house and any enemy not listed in these h lines is not in any house and all of them can be targeted. No enemy appears more than once on any line.
+The input begins with a line containing three integers \( a \), \( e \), and \( h \). These represent the number of allies, the number of enemies, and the number of houses the enemies belong to, respectively (\(1 \leq a \leq e \leq 100\) and \(0 \leq h \leq e\)). Each ally and enemy is uniquely identified by their names.
+\\\\
+Following this line are \( a \) lines, each representing the hit list of an ally. Each line starts with the name of the ally followed by an integer  \( k \) (\(0 \leq k \leq e\)), indicating the maximum number of enemies they can target. This is followed by a list of enemy names representing their targets. 
+\\\\
+Next are \( h \) lines, each representing a house and its associated enemies. Each line starts with the name of the house, followed by a list of enemy names belonging to that house, and finally, an integer \( r \) (\(0 \leq r \leq \text{number of enemies in the house}\)), indicating that at most \( r \) of these enemies can be killed. Enemies can belong to at most one house, and any enemies not listed under a house can be targeted if the alliance desires. There might also be scenarios where there are enemies that none of the allies has a desire to kill. 
 
 \section{Output}
-After calculating the maximum number of enemies your alliances can kill, the output is determined based on the percentage of enemies killed:
-\begin{itemize}
-    \item \textbf{If more than 50\% of the enemies have been eliminated}, the output will be "Dracarys" followed by the total number of enemies killed.
-    \item \textbf{If 50\% or fewer of the enemies have been killed}, the output will be "When you play the game of thrones, you win or you die, therefore we surrender now" followed by the total number of enemies that could have been killed.
-\end{itemize}
+As the leader, your tactical decisions are key to securing the iron throne. Should your alliance defeat more than 50\% of the enemies, give the order "Dracarys" and report the highest number of enemies you can defeat on your path to victory. If you cannot exceed this mark, show wisdom and give the order "In the game of thrones, you win or you die," and show the highest number of enemies you could have defeated.
