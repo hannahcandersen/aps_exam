@@ -2,15 +2,13 @@ import os
 import random
 import math
 
-# Testing with the maximum allowed parameters
-n = 100  # maximum number of candles
-m = 100  # maximum number of cuts
-r = 10  # maximum radius
+n = 50  # maximum number of candles
+m = 15  # maximum number of cuts
+r = 100  # maximum radius
 
-# Sample worst-case scenario data setup
 
 # Generate random candles while adhering to the specified constraints
-candles = set()
+candles = set() # Use a set to ensure distinct candles
 while len(candles) < n:
     # Generate coordinates (x, y) such that x^2 + y^2 < r^2
     x = random.randint(-r, r)

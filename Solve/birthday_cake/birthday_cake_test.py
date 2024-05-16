@@ -19,18 +19,22 @@ class Segment:
             self.start = end
             self.end = start
 
+
 n, m, r = map(int, input().split())
 epsilon = 10**-4
 candles = []
 lines = []
-edges = m
 intersection_circle = set()
 
 
-# Calculate intersection points between a circle and a line
+# Find intersection points between a circle and a line
 def intersection_line_circle(a, b, c, r):
     # ax + by + c = 0   - line
     # x² + y² = r²      - circle
+    '''
+    Given that the input guarantees no line is tangent to or completely outside the circle,
+    we don't have to check the denominator in our calculations, since we will always get two intersection points.
+    '''
     if b == 0:
         x = -c/a
         # Solve for y in the circle equation: y = sqrt(r^2 - x^2)
@@ -48,7 +52,7 @@ def intersection_line_circle(a, b, c, r):
     return [Point(x1, y1), Point(x2, y2)]
     
 
-# Calculate intersection point between two lines
+# Find intersection point between two lines
 def intersection_line_line(line1, line2, r):
     a1, b1, c1 = line1.a, line1.b, line1.c
     a2, b2, c2 = line2.a, line2.b, line2.c
@@ -65,31 +69,40 @@ def intersection_line_line(line1, line2, r):
 
     return Point(x, y)
 
+
+# Check if a point is inside a circle
 def is_point_in_circle(x, y, r):
-    # Since the circle is centered at the origin (0,0), we can simplify the distance formula to:
+    '''
+    Euclidean distance - sqrt((x2 - x1)^2 + (y2 - y1)^2)
+    Since the circle is centered at the origin (0,0), the distance formula can be simplifed to: sqrt(x^2 + y^2)
+    '''
     d = math.sqrt(x**2 + y**2)
     return d < r
 
 
-
-def line_sweep(segments, edges):
+# Sweep line algorithm to find intersection points (missing data structure)
+def sweep_line(segments):
     events = []  # List to store events (start and end points of segments)
+    edges = 0
+
     for segment in segments:
         events.append((segment.start, 'start', segment))
         events.append((segment.end, 'end', segment))
 
     events.sort(key=lambda event: event[0].x)  # Sort by the x-coordinate of the point in each event tuple
+    # time complexity: O(n log n)
 
-    active_segments = set()  # Set to keep track of active segments
-    intersections = set()  # Set to store intersection points
+    active_segments = set()
+    intersections = set() 
 
     for event in events:
         _, event_type, segment = event
         if event_type == 'start':
-            for active_segment in active_segments:
+            
+            for active_segment in active_segments: # Check for intersections with other active segments
                 intersection_point = intersection_line_line(segment, active_segment, r)
                 
-                if intersection_point is not None: # If the lines intersect
+                if intersection_point: # If the lines intersect
                     if intersection_point not in intersections:
                         edges += 2  # Increment edges by 2 because two new edges are created
                     else:
@@ -103,7 +116,7 @@ def line_sweep(segments, edges):
     return intersections, edges
 
 
-
+# Check if each piece of cake has exactly one candle
 def check_candles(lines):
     candles_on_piece = [set(range(n))] # Initially there is only one set containing all candles.
     
@@ -119,11 +132,16 @@ def check_candles(lines):
             for candle_index in piece:
                 candle = candles[candle_index]
                 
+                '''
+                The input guarantees that the candle is not on a line and is inside the circle.
+                So we can assume that the candle will be either on one piece or another.
+                '''
                 if line.a * candle[0] + line.b * candle[1] + line.c > 0:
                     one_side.add(candle_index)
                 else:
                     other_side.add(candle_index)
             
+            # Add the new pieces to the list of new pieces.
             if one_side:
                 new_cake_pieces.append(one_side)
             if other_side:
@@ -145,32 +163,39 @@ for _ in range(n):
 
 for _ in range(m):
     (a, b, c) = map(int, input().split())
-    point1, point2 = intersection_line_circle(a, b, c, r)
 
+    point1, point2 = intersection_line_circle(a, b, c, r)
     intersection_circle.update((point1, point2))
+
     segment = Segment(a, b, c, point1, point2)
     lines.append(segment)
 
 
-intersections, edges = line_sweep(lines, edges)
+# Find the intersection points and edges using the sweep line algorithm
+intersections, edges = sweep_line(lines)
+is_evenly_split = check_candles(lines)
+
+# Add the number of vertices and edges from the circle
 verticies = len(intersections) + len(intersection_circle)
+edges += len(intersection_circle) + m
 
-# Add the edges from the circle
-edges += len(intersection_circle)
-
-#F = E-V+1
+# Euler's formula: F = E - V + 1
 cake_pieces = edges - verticies + 1
 
 
 if cake_pieces > n:
+    '''
+    If the number of pieces is greater than the number of candles,
+    it's impossible to have exactly one candle on each piece
+    '''
     end_time = time.time()
     print('no')
-    print(f'time: {end_time - start_time}')
-elif check_candles(lines) and n == cake_pieces:
-   end_time = time.time()
-   print('yes')
-   print(f'time: {end_time - start_time}')
+    #print(f'time: {end_time - start_time}')
+elif n == cake_pieces and is_evenly_split: 
+    end_time = time.time()
+    print('yes')
+    #print(f'time: {end_time - start_time}')
 else:
     end_time = time.time()
     print('no')
-    print(f'time: {end_time - start_time}')
+    #print(f'time: {end_time - start_time}')

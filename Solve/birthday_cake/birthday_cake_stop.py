@@ -69,9 +69,9 @@ def is_point_in_circle(x, y, r):
 
 
 # Check if there is exactly one candle on each piece
-def check_candle(lines):
+def check_candles(lines):
     candles_on_piece = [set(range(n))] # Initially there is only one set containing all candles.
-
+    
     for line in lines:
         new_cake_pieces = []
         
@@ -100,6 +100,8 @@ def check_candle(lines):
             
         candles_on_piece = new_cake_pieces
     
+    print(f'candles_on_piece: {candles_on_piece}')
+    print(f'len(candles_on_piece): {len(candles_on_piece)}')
     return all(len(c) == 1 for c in candles_on_piece)
 
 
@@ -116,7 +118,6 @@ for _ in range(m):
 
     ######## FIND CAKE PIECES ########
     inters_circle = find_intersection_line_circle(a, b, c, r)
-    
     intersection_points_circle.update(inters_circle)
     intersection_points.update(inters_circle)
 
@@ -142,11 +143,14 @@ edges += len(intersection_points_circle)
 # Euler's formula: F = E-V+1 (only 1, because we don't want to count the infinite area outside the cake)
 cake_pieces = edges - len(intersection_points) + 1
 
+
+print(f'cake_pieces: {cake_pieces}')
+
 if cake_pieces > n:
     end_time = time.time()
     print('no')
     print(f'time: {end_time - start_time}')
-elif check_candle(lines) and n == cake_pieces:
+elif check_candles(lines) and n == cake_pieces:
    end_time = time.time()
    print('yes')
    print(f'time: {end_time - start_time}')
@@ -154,4 +158,3 @@ else:
     end_time = time.time()
     print('no')
     print(f'time: {end_time - start_time}')
-
