@@ -8,6 +8,7 @@ lines = []
 intersection_points = set()
 intersection_points_circle = set()
 edges = m
+candles_on_piece = [set(range(n))] # Initially there is only one set containing all candles.
 
 
 ######## METHODS ########
@@ -68,40 +69,6 @@ def is_point_in_circle(x, y, r):
     return d < r
 
 
-# Check if there is exactly one candle on each piece
-def check_candle(lines):
-    candles_on_piece = [set(range(n))] # Initially there is only one set containing all candles.
-
-    for line in lines:
-        new_cake_pieces = []
-        
-        for piece in candles_on_piece:
-            one_side = set()
-            other_side = set()
-            
-            # Check the candles in the current piece.
-            for candle_index in piece:
-                candle = candles[candle_index]
-                
-                '''
-                The input guarantees that the candle is not on a line and is inside the circle.
-                So we can assume that the candle will be either on one piece or another.
-                '''
-                if line[0] * candle[0] + line[1] * candle[1] + line[2] > 0:
-                    one_side.add(candle_index)
-                else:
-                    other_side.add(candle_index)
-            
-            # Add the new pieces to the list of new pieces.
-            if one_side:
-                new_cake_pieces.append(one_side)
-            if other_side:
-                new_cake_pieces.append(other_side)
-            
-        candles_on_piece = new_cake_pieces
-    
-    return all(len(c) == 1 for c in candles_on_piece)
-
 
 
 ######## START ########
@@ -136,22 +103,49 @@ for _ in range(m):
 
 
 
+    ######## CHECK CANDLES ########
+    new_cake_pieces = []
+    
+    for piece in candles_on_piece:
+        one_side = set()
+        other_side = set()
+        
+        # Check the candles in the current piece.
+        for candle_index in piece:
+            candle = candles[candle_index]
+            
+            '''
+            The input guarantees that the candle is not on a line and is inside the circle.
+            So we can assume that the candle will be either on one piece or another.
+            '''
+            if a * candle[0] + b * candle[1] + c > 0:
+                one_side.add(candle_index)
+            else:
+                other_side.add(candle_index)
+        
+        # Add the new pieces to the list of new pieces.
+        if one_side:
+            new_cake_pieces.append(one_side)
+        if other_side:
+            new_cake_pieces.append(other_side)
+    
+    # Update the list of pieces to the newly created pieces after the cut.
+    candles_on_piece = new_cake_pieces
+
+
 # Add the edges from the circle
 edges += len(intersection_points_circle)
+
 
 # Euler's formula: F = E-V+1 (only 1, because we don't want to count the infinite area outside the cake)
 cake_pieces = edges - len(intersection_points) + 1
 
-if cake_pieces > n:
-    end_time = time.time()
-    print('no')
-    print(f'time: {end_time - start_time}')
-elif check_candle(lines) and n == cake_pieces:
+
+if all(len(s) == 1 for s in candles_on_piece) and n == cake_pieces:
    end_time = time.time()
    print('yes')
-   print(f'time: {end_time - start_time}')
+   #print(f'time: {end_time - start_time}')
 else:
     end_time = time.time()
     print('no')
-    print(f'time: {end_time - start_time}')
-
+    #print(f'time: {end_time - start_time}')
