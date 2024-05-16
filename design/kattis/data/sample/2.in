@@ -1,6 +1,13 @@
-3 3 2
-Tywin 2 Robb Joffrey
-Viserys 1 Sansa
-Arya 1 Robb
-Stark Sansa Robb 2
-Lannister Joffrey 1
+6 8 5
+AryaStark 2 CerseiLannister WalderFrey NightKing
+TywinLannister 2 RobbStark NedStark
+OlennaTyrell 1 JoffreyLannister
+DaenerysTargaryen 2 CerseiLannister
+JonSnow 2 RamsayBolton NightKing
+SansaStark 3 Littlefinger RamsayBolton JoffreyBaratheon CerseiLannister
+Lannister JoffreyLannister CerseiLannister 1
+Stark RobbStark NedStark 2
+Frey WalderFrey 1
+Baelish Littlefinger 1
+Bolton RamsayBolton 1
+
