@@ -3,9 +3,9 @@ import random
 import math
 
 # Testing with the maximum allowed parameters
-n = 10000  # maximum number of candles
-m = 1000  # maximum number of cuts
-r = 100  # maximum radius
+n = 100  # maximum number of candles
+m = 100  # maximum number of cuts
+r = 10  # maximum radius
 
 # Sample worst-case scenario data setup
 

@@ -140,12 +140,16 @@ edges += len(intersection_points_circle)
 # Euler's formula: F = E-V+1 (only 1, because we don't want to count the infinite area outside the cake)
 cake_pieces = edges - len(intersection_points) + 1
 
+#print(f'cake_pieces: {cake_pieces}')
+#print(f'candles_on_piece: {candles_on_piece}')
+#print(f'len(candles_on_piece): {len(candles_on_piece)}')
+
 
 if all(len(s) == 1 for s in candles_on_piece) and n == cake_pieces:
-   end_time = time.time()
-   print('yes')
-   #print(f'time: {end_time - start_time}')
+    end_time = time.time()
+    print('yes')
+    print(f'time: {end_time - start_time}')
 else:
     end_time = time.time()
     print('no')
-    #print(f'time: {end_time - start_time}')
+    print(f'time: {end_time - start_time}')
