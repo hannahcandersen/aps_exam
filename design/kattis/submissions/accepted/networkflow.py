@@ -1,47 +1,17 @@
 """
-- Input:
-First line with 3 integers
-    - A: number of members in alliance
-    - E: number of enemies
-    - H: number of houses
-
-A lines, where line 1 is alliance member 1, line 2 is alliance member 2, etc       
-    - a: name of the alliance member
-    - k: number of enemies this alliance member can kill (capacity)
-    - t1 t2 ... tk: names of the enemies this alliance member wants to kill
-
-H lines, where line 1 is house 1, line 2 is house 2, etc.
-    - h: name of the house  
-    - t1 t2 ... tl: name of the enemies in this house
-    - r: at most r enemies from this house can be killed (capacity) 
-
-- Output:
-    - 
-
-Use Ford-Fulkerson algorithm to find the maximum flow in the graph. 
-"""
-
-"""
-    Use to find the maximum flow in a graph using the Ford-Fulkerson algorithm.
-
+    FORD FULKERSON FLOW ALGORITHM
+    Taken from: https://github.itu.dk/algorithms/aps-24/blob/main/060-network-flows/code/flow.py 
+    
     Can be used for graphs represented as:
       graph = defaultdict(lambda: defaultdict(int)) # vertex -> (vertex -> capacity)
-
-    Taken from: https://github.itu.dk/algorithms/aps-24/blob/main/060-network-flows/code/flow.py 
 """
-
-
 from collections import defaultdict
+from collections import deque
+from time import time
 
 ### BREADTH-FIRST SEARCH ###
-from collections import deque
-
-
 def bfs(graph, src, sink, mincap=0):
     """
-    Implements the Breadth-First Search algorithm to find a path from a source node to a destination node in a graph.
-    Works by exploring all the vertices at the current depth/level before moving on to vertices at the next depth level.
-
     Args:
         graph (dict):           The graph, represented as a dictionary where the keys are nodes and the values are dictionaries
                                 representing the adjacent nodes and their capacities.
@@ -94,7 +64,7 @@ def bfs(graph, src, sink, mincap=0):
 ### FORD-FULKERSON ALGORITHM ###
 def flow(orggraph, src, dest):
     """
-    Implements the Ford-Fulkerson algorithm to find the maximum flow in a flow network.
+    Ford-Fulkerson algorithm to find the maximum flow in a flow network.
     Works by repeatedly finding paths from the source to the destination in the residual graph
     and augmenting the flow along these paths until no more augmenting paths can be found.
 
@@ -154,6 +124,17 @@ def flow(orggraph, src, dest):
             # Increase the capacity of the reverse edge by the minimum capacity of the path
             graph[v][u] += saturation
 
+
+
+
+
+"""
+    SOLUTION
+    
+    Builds a graph from the input and uses the Ford-Fulkerson algorithm to find the maximum flow in the graph.
+"""
+
+start = time()
 a, e, h = map(int, input().split()) # alliances, enemies, houses
 
 #### GRAPH REPRESENTATION ####
@@ -171,7 +152,7 @@ wanted_enemies = []
 for alliance_i in range(a): 
     alliance_v = alliance_i + alliance_start 
     line = list(input().split()) # {name, capacity, name .. name}
-    capacity = int(line[1])
+    capacity = int(line[1]) # Maximum number of enemies the alliance member can kill
     enemies = line[2:] 
     
     # Add edge between source and alliance 
@@ -179,13 +160,10 @@ for alliance_i in range(a):
     
     # Add edge between alliance and enemies
     for enemy in enemies: 
-        # Add newly encountered enemies to the list of wanted enemies
         if enemy not in wanted_enemies:
             wanted_enemies.append(enemy)
-        
-        # Add edge between alliance_index and enemy_index
         enemy_v = wanted_enemies.index(enemy) + enemy_start 
-        graph[alliance_v][enemy_v] = 1 # capacity always 1
+        graph[alliance_v][enemy_v] = 1
         
 # Houses
 for house_i in range(h): 
@@ -209,7 +187,7 @@ for enemy in wanted_enemies:
     if enemy_v not in graph:
         graph[enemy_v][sink_v] = 1
 
-#### FIND MAX FLOW ####
+#### FIND MAX FLOW AND RESULT ####
 (max_flow, residual_graph, visited) = flow(graph, source_v, sink_v)
 result = max_flow/e
 
@@ -217,3 +195,6 @@ if result > 0.5:
     print("Dracarys", max_flow)
 else:
     print("When you play the game of thrones, you win or you die, therefore we surrender now", max_flow)
+
+end = time()
+#print("Running time", end-start)

@@ -1,9 +1,7 @@
-6 5 2
-Viserys 1 Ned
-Arya 2 NightKing Joffrey
-Tywin 2 Sansa Robb Ned
-SendorClegane 1 Joffrey
-Renly 1 Sansa
-Olenna 1 Joffrey
-Lannister Joffrey 1
-Stark Sansa Robb Ned 2
+4 4 2
+CerseiLannister 2 TyrionLannister MargaeryTyrell
+OlennaTyrell 1 JoffreyLannister
+SansaStark 1 JoffreyLannister
+RobbStark 1 TywinLannister
+Lannister TyrionLannister JoffreyLannister TywinLannister 3
+Tyrell MargaeryTyrell 1
