@@ -1,21 +1,8 @@
 """
 Find out what was ordered given the total cost of the order and the cost of each item on the menu.
-    
-Input: 
-- n: number of items on the menu (1 <= n <= 100)
-- n space-seperated integers (c1, c2..): the cost of each item on the menu (1 <= cost <= 1000)    
-- m: the numbers of orders (1 <= m <= 1000)
-- m orders of an integer s (1 <= s <= 30.000): the total cost of the order
-Output: 
-- For each order
-    - If there is one unique order giving this cost, output a space-separated list of the items ordered
-    - If there are multiple orders giving this cost, output "Ambiguous"
-    - If there is no order giving this cost, output "Impossible"
-    
-Description of solution: 
-- Iterative bottom-up dynamic programming approach. 
-- Memoization/tabulation to avoid recomputation of subproblems
-- Keep track of the last item used to reach each price to be able to reconstruct the order. 
+    Iterative bottom-up dynamic programming approach. 
+    Memoization/tabulation to avoid recomputation of subproblems
+    Keep track of the last item used to reach each price to be able to reconstruct the order. 
 """
 
 # Read input
