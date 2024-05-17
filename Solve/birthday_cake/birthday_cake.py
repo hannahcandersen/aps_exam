@@ -27,6 +27,7 @@ lines = []
 intersection_circle = set()
 
 
+######## METHODS ########
 # Find intersection points between a circle and a line
 def intersection_line_circle(a, b, c, r):
     # ax + by + c = 0   - line
@@ -35,6 +36,7 @@ def intersection_line_circle(a, b, c, r):
     Given that the input guarantees no line is tangent to or completely outside the circle,
     we don't have to check the denominator in our calculations, since we will always get two intersection points.
     '''
+    # The line is vertical, so x is the same for both intersection points
     if b == 0:
         x = -c/a
         # Solve for y in the circle equation: y = sqrt(r^2 - x^2)
@@ -80,7 +82,7 @@ def is_point_in_circle(x, y, r):
     return d < r
 
 
-# Sweep line algorithm to find intersection points (missing data structure)
+# Sweep line algorithm to find intersection points
 def sweep_line(segments):
     events = []  # List to store events (start and end points of segments)
     edges = 0
@@ -116,19 +118,19 @@ def sweep_line(segments):
     return intersections, edges
 
 
-# Check if each piece of cake has exactly one candle
+# Check if there is exactly one candle on each piece
 def check_candles(lines):
     candles_on_piece = [set(range(n))] # Initially there is only one set containing all candles.
     
     for line in lines:
-        new_cake_pieces = [] # A new list to hold the divided pieces after each cut.
+        new_cake_pieces = []
         
-        # Iterate over the existing pieces of cake.
+        # Check the existing pieces of cake.
         for piece in candles_on_piece:
             one_side = set()
             other_side = set()
             
-            # Iterate over the candle indices in the current piece.
+            # Check the candles in the current piece.
             for candle_index in piece:
                 candle = candles[candle_index]
                 
@@ -178,7 +180,7 @@ intersections, edges = sweep_line(lines)
 verticies = len(intersections) + len(intersection_circle)
 edges += len(intersection_circle) + m
 
-# Euler's formula: F = E - V + 1
+# Euler's formula: F = E-V+1 (only 1, because we don't want to count the infinite area outside the cake)
 cake_pieces = edges - verticies + 1
 
 

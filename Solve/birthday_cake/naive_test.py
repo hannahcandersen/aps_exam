@@ -8,7 +8,6 @@ lines = []
 intersection_points = set()
 intersection_points_circle = set()
 edges = m
-candles_on_piece = [set(range(n))] # Initially there is only one set containing all candles.
 
 
 ######## METHODS ########
@@ -16,7 +15,6 @@ candles_on_piece = [set(range(n))] # Initially there is only one set containing 
 def find_intersection_line_circle(a, b, c, r):
     # ax + by + c = 0   - line
     # x² + y² = r²      - circle
-
     '''
     Given that the input guarantees no line is tangent to or completely outside the circle,
     we don't have to check the denominator in our calculations, since we will always get two intersection points.
@@ -69,6 +67,42 @@ def is_point_in_circle(x, y, r):
     return d < r
 
 
+# Check if there is exactly one candle on each piece
+def check_candles(lines):
+    candles_on_piece = [set(range(n))] # Initially there is only one set containing all candles.
+    
+    for line in lines:
+        new_cake_pieces = []
+        
+        # Check the existing pieces of cake.
+        for piece in candles_on_piece:
+            one_side = set()
+            other_side = set()
+            
+            # Check the candles in the current piece.
+            for candle_index in piece:
+                candle = candles[candle_index]
+                
+                '''
+                The input guarantees that the candle is not on a line and is inside the circle.
+                So we can assume that the candle will be either on one piece or another.
+                '''
+                if line[0] * candle[0] + line[1] * candle[1] + line[2] > 0:
+                    one_side.add(candle_index)
+                else:
+                    other_side.add(candle_index)
+            
+            # Add the new pieces to the list of new pieces.
+            if one_side:
+                new_cake_pieces.append(one_side)
+            if other_side:
+                new_cake_pieces.append(other_side)
+
+        # Update the list of pieces to the newly created pieces after the cut.    
+        candles_on_piece = new_cake_pieces
+    
+    return all(len(c) == 1 for c in candles_on_piece)
+
 
 
 ######## START ########
@@ -83,7 +117,6 @@ for _ in range(m):
 
     ######## FIND CAKE PIECES ########
     inters_circle = find_intersection_line_circle(a, b, c, r)
-    
     intersection_points_circle.update(inters_circle)
     intersection_points.update(inters_circle)
 
@@ -103,49 +136,21 @@ for _ in range(m):
 
 
 
-    ######## CHECK CANDLES ########
-    new_cake_pieces = []
-    
-    for piece in candles_on_piece:
-        one_side = set()
-        other_side = set()
-        
-        # Check the candles in the current piece.
-        for candle_index in piece:
-            candle = candles[candle_index]
-            
-            '''
-            The input guarantees that the candle is not on a line and is inside the circle.
-            So we can assume that the candle will be either on one piece or another.
-            '''
-            if a * candle[0] + b * candle[1] + c > 0:
-                one_side.add(candle_index)
-            else:
-                other_side.add(candle_index)
-        
-        # Add the new pieces to the list of new pieces.
-        if one_side:
-            new_cake_pieces.append(one_side)
-        if other_side:
-            new_cake_pieces.append(other_side)
-    
-    # Update the list of pieces to the newly created pieces after the cut.
-    candles_on_piece = new_cake_pieces
-
-
 # Add the edges from the circle
 edges += len(intersection_points_circle)
-
 
 # Euler's formula: F = E-V+1 (only 1, because we don't want to count the infinite area outside the cake)
 cake_pieces = edges - len(intersection_points) + 1
 
-#print(f'cake_pieces: {cake_pieces}')
-#print(f'candles_on_piece: {candles_on_piece}')
-#print(f'len(candles_on_piece): {len(candles_on_piece)}')
+### For Testing ###
+is_evenly_split = check_candles(lines) # Always executed
 
 
-if all(len(s) == 1 for s in candles_on_piece) and n == cake_pieces:
+if cake_pieces > n:
+    end_time = time.time()
+    print('no')
+    print(f'time: {end_time - start_time}')
+elif n == cake_pieces and is_evenly_split:
     end_time = time.time()
     print('yes')
     print(f'time: {end_time - start_time}')

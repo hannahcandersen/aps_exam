@@ -15,7 +15,6 @@ edges = m
 def find_intersection_line_circle(a, b, c, r):
     # ax + by + c = 0   - line
     # x² + y² = r²      - circle
-
     '''
     Given that the input guarantees no line is tangent to or completely outside the circle,
     we don't have to check the denominator in our calculations, since we will always get two intersection points.
@@ -75,6 +74,7 @@ def check_candles(lines):
     for line in lines:
         new_cake_pieces = []
         
+        # Check the existing pieces of cake.
         for piece in candles_on_piece:
             one_side = set()
             other_side = set()
@@ -97,11 +97,10 @@ def check_candles(lines):
                 new_cake_pieces.append(one_side)
             if other_side:
                 new_cake_pieces.append(other_side)
-            
+
+        # Update the list of pieces to the newly created pieces after the cut.    
         candles_on_piece = new_cake_pieces
     
-    print(f'candles_on_piece: {candles_on_piece}')
-    print(f'len(candles_on_piece): {len(candles_on_piece)}')
     return all(len(c) == 1 for c in candles_on_piece)
 
 
@@ -144,17 +143,15 @@ edges += len(intersection_points_circle)
 cake_pieces = edges - len(intersection_points) + 1
 
 
-print(f'cake_pieces: {cake_pieces}')
-
 if cake_pieces > n:
     end_time = time.time()
     print('no')
-    print(f'time: {end_time - start_time}')
-elif check_candles(lines) and n == cake_pieces:
-   end_time = time.time()
-   print('yes')
-   print(f'time: {end_time - start_time}')
+    #print(f'time: {end_time - start_time}')
+elif n == cake_pieces and check_candles(lines):
+    end_time = time.time()
+    print('yes')
+    #print(f'time: {end_time - start_time}')
 else:
     end_time = time.time()
     print('no')
-    print(f'time: {end_time - start_time}')
+    #print(f'time: {end_time - start_time}')

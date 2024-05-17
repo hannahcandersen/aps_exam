@@ -2,8 +2,8 @@ import os
 import random
 import math
 
-n = 50  # maximum number of candles
-m = 15  # maximum number of cuts
+n = 100  # maximum number of candles
+m = 10000  # maximum number of cuts
 r = 100  # maximum radius
 
 
@@ -38,7 +38,7 @@ while len(lines) < m:
 
 
 # Write to file in current folder
-file_name = "worst_case4.in"
+file_name = "worst_case2.in"
 current_directory = os.getcwd()
 file_path = os.path.join(current_directory, file_name)
 
